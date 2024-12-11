@@ -13,7 +13,7 @@ export default function SidebarButton(props: SidebarButtonProps){
         <>
             <button
                 onClick={handleClick}
-                className="w-full bg-slate-200 hover:bg-slate-300 text-xs text-left p-2 rounded-md leading-none"
+                className="w-full bg-slate-200 hover:bg-slate-300 text-xs text-left p-2 rounded-md leading-none transition-all"
             >
                 {props.label}
             </button>
