@@ -17,7 +17,7 @@ export default function Button({ color = "primary", ...props }: ButtonProps){
                 form={props.form}
                 onClick={props.onClick}
                 disabled={props.disabled}
-                className={`px-4 h-8 rounded-md ${colorClasses[color]} text-xs tracking-wider text-white transition-colors`}
+                className={`w-fit px-4 h-8 rounded-md ${colorClasses[color]} text-xs tracking-wider text-white transition-colors`}
             >
                 {props.label}
             </button>
