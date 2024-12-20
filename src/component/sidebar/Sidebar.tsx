@@ -2,7 +2,7 @@ import SidebarButton from "./SidebarButton";
 
 export default function Sidebar(){
     return(
-        <nav className="col-span-1 border-r border-slate-300 bg-slate-200 h-full select-none">
+        <nav className="col-span-1 border-r border-slate-300 bg-slate-100 h-[calc(100vh-40px)] select-none">
             <div className="w-full h-12 p-1 border-b border-slate-300 flex items-center justify-center tracking-widest font-semibold text-lg">
                 <h2>Aphrodite&#8482;</h2>
             </div>
