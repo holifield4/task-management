@@ -8,7 +8,7 @@ export default function Sidebar(){
             </div>
             <ul className="w-full h-fit flex flex-col gap-1 p-1.5">
                 <p className="font-semibold text-xs text-gray-500">Services</p>
-                <SidebarButton label="Task Management" goto="/props"/>
+                <SidebarButton label="Task Management" goto="/"/>
                 <SidebarButton label="Milestone" goto="/props"/>
                 <SidebarButton label="Project Management" goto="/props"/>
             </ul>
