@@ -15,9 +15,7 @@ export default function Homepage() {
       key: "status",
       header: "Status",
       render: (value) => (
-        <span className="rounded-full bg-gray-100 px-2 py-1 text-sm">
-          {value}
-        </span>
+        <span className="rounded-full bg-teal-100 px-2 py-1">{value}</span>
       ),
     },
     { key: "parentId", header: "Parent ID" },
@@ -25,19 +23,21 @@ export default function Homepage() {
 
   return (
     <>
-      <div className="h-[calc(100vh-88px)] p-2 overflow-auto bg-slate-50">
+      <div className="w-full h-full flex flex-col">
         <Section title="Section">
-          <TextField label="Task Name" />
-          <TextField label="Task Name" errors />
-          <Select label="Status" options={taskStatusOptions} errors />
-          <Select label="Status" options={taskStatusOptions} />
-          <Button label="Click Here" />
-          <Button label="Click Here" color="neutral" />
-          <Button label="Click Here" color="danger" />
+          <div>
+            <TextField label="Task Name" />
+            <TextField label="Task Name" errors />
+            <Select label="Status" options={taskStatusOptions} errors />
+            <Select label="Status" options={taskStatusOptions} />
+            <Button label="Click Here" />
+            <Button label="Click Here" color="neutral" />
+            <Button label="Click Here" color="danger" />
+          </div>
         </Section>
 
-        <div className="w-full h-[300px] overflow-y-auto">
-          <DataTable data={taskData} columns={columns} />
+        <div className="w-full h-full overflow-hidden">
+          <DataTable data={taskData} columns={columns} enableAction/>
         </div>
       </div>
     </>
