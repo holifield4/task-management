@@ -1,5 +1,5 @@
 export type ITask = {
-    id: string;
+    id: number;
     name: string;
     status: string;
     parentId?: string;
