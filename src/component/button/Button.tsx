@@ -10,13 +10,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export default function Button({ color = "primary", variant = "normal", ...props }: ButtonProps){
 
     const colorClasses = {
-        primary: "bg-blue-600 hover:bg-blue-700",
-        danger: "bg-red-600 hover:bg-red-700",
-        neutral: "border border-slate-300 bg-gray-100 hover:bg-gray-200 text-black flex items-center",
+        primary: "bg-blue-600 hover:bg-blue-700 text-white",
+        danger: "bg-red-600 hover:bg-red-700 text-white",
+        neutral: `border border-slate-300 bg-gray-100 ${props.disabled ? "cursor-not-allowed" : "hover:bg-gray-200"} text-black flex items-center`,
       };
-
+      
     const variantClasses = {
-        normal: `w-fit px-4 h-8 rounded-md text-xs tracking-wider text-white transition-colors ${colorClasses[color]}`,
+        normal: `w-fit px-4 h-8 rounded-md text-xs tracking-wider transition-colors ${colorClasses[color]}`,
         table: "w-fit h-fit bg-transparent text-slate-800 hover:text-slate-500 flex gap-1 items-center justify-center transition-colors"
     }
 
