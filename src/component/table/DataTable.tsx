@@ -1,6 +1,11 @@
 import { ReactNode } from "react";
 import Button from "../button/Button";
 import TextField from "../textfield/TextField";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { setPagination, setSort } from "../../store/table/tableSlice";
+import Select from "../select/Select";
+import { pageSize } from "../../lib/constant/constant";
 
 export type Column<T> = {
   key: keyof T;
@@ -20,16 +25,23 @@ export default function DataTable<T extends { id: number | string }>({
   enableAction,
 }: DataTableProps<T>) {
   return (
-    <div className="overflow-x-auto text-xs h-full">
+    <div className="text-xs h-full overflow-hidden flex flex-col">
       <TableControl />
-      <table className="min-w-full border-collapse rounded-md">
-        <TableHeader columns={columns} actions={enableAction}/>
-        <tbody>
-          {data.map((row) => (
-            <TableRow key={row.id} row={row} columns={columns} actions={enableAction}/>
-          ))}
-        </tbody>
-      </table>
+      <div className="w-full max-h-[calc(100%-7rem)] overflow-auto">
+        <table className="min-w-full border-collapse border-x rounded-md">
+          <TableHeader columns={columns} actions={enableAction} />
+          <tbody>
+            {data.map((row) => (
+              <TableRow
+                key={row.id}
+                row={row}
+                columns={columns}
+                actions={enableAction}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
       <TableFooter />
     </div>
   );
@@ -41,17 +53,23 @@ type TableHeaderProps<T> = {
 };
 
 function TableHeader<T>({ columns, actions }: TableHeaderProps<T>) {
+  const dispatch = useDispatch();
   return (
     <thead>
-      <tr className="bg-gray-100 sticky top-16">
+      <tr className="bg-gray-200 sticky top-0">
         {columns.map((column) => (
-          <th key={String(column.key)} className="border-x border-b p-2">
-            <Button variant="table" label={column.header} icon="sort" />
+          <th key={String(column.key)} className="p-2">
+            <Button
+              variant="table"
+              label={column.header}
+              icon="sort"
+              onClick={() =>
+                dispatch(setSort(String(column.key)))
+              }
+            />
           </th>
         ))}
-        {actions && (
-          <th>More</th>
-        )}
+        {actions && <th>More</th>}
       </tr>
     </thead>
   );
@@ -66,7 +84,7 @@ type TableRowProps<T> = {
 function TableRow<T extends { id: number | string }>({
   row,
   columns,
-  actions
+  actions,
 }: TableRowProps<T>) {
   return (
     <tr key={row.id}>
@@ -78,8 +96,15 @@ function TableRow<T extends { id: number | string }>({
         />
       ))}
       {actions && (
-        <td className="border-y p-2 flex justify-center">
-          <Button label="" variant="table" icon="dots"/>
+        <td className="border p-2">
+          <div className="w-full h-full flex justify-center">
+            <Button
+              label=""
+              variant="table"
+              icon="dots"
+              onClick={() => alert("dispatch something")}
+            />
+          </div>
         </td>
       )}
     </tr>
@@ -101,28 +126,71 @@ function TableCell<T>({ value, render }: TableCellProps<T>) {
 
 function TableControl() {
   return (
-    <div className="w-full h-16 px-4 bg-gray-100 border rounded-t-md border-gray-200 flex justify-between items-center sticky top-0">
+    <div className="w-full h-16 px-4 bg-gray-100 border rounded-t-md border-gray-200 flex justify-between items-center">
       <div className="w-1/3">
         <TextField label="" placeholder="Search..." />
       </div>
       <div className="w-fit flex gap-3">
         <Button color="neutral" label="Filter" onClick={() => alert("shesh")} />
-        <Button color="neutral" label="View" icon="adjustment"/>
-        <Button color="neutral" label="" icon="printer"/>
-        <Button color="neutral" label="" icon="pdf"/>
+        <Button color="neutral" label="View" icon="adjustment" />
+        <Button color="neutral" label="" icon="printer" />
+        <Button color="neutral" label="" icon="pdf" />
       </div>
     </div>
   );
 }
 
 function TableFooter() {
+  const tableData = useSelector((state: RootState) => state.table);
+  const dispatch = useDispatch();
   return (
-    <div className="w-full h-12 px-4 bg-gray-100 border rounded-b-md border-gray-200 flex justify-end items-center gap-2.5 sticky bottom-0">
-      <Button color="neutral" label="" icon="chevronDoubleLeft"/>
-      <Button color="neutral" label="" icon="chevronLeft"/>
-      <span>5/10</span>
-      <Button color="neutral" label="" icon="chevronRight"/>
-      <Button color="neutral" label="" icon="chevronDoubleRight"/>
+    <div className="w-full h-12 px-4 bg-gray-100 border rounded-b-md border-gray-200 flex justify-end items-center gap-2.5">
+      <div className="w-fit flex gap-2.5 items-center">
+        <span>Show</span>
+        <Select
+          label=""
+          options={pageSize}
+          onChange={(e) =>
+            dispatch(
+              setPagination({
+                control: "pageSize",
+                pageSize: Number(e.target.value),
+              })
+            )
+          }
+        />
+      </div>
+      <Button
+        color="neutral"
+        label=""
+        icon="chevronDoubleLeft"
+        disabled={tableData.currentPage === 1}
+        onClick={() => dispatch(setPagination({ control: "firstPage" }))}
+      />
+      <Button
+        color="neutral"
+        label=""
+        icon="chevronLeft"
+        disabled={tableData.currentPage === 1}
+        onClick={() => dispatch(setPagination({ control: "previousPage" }))}
+      />
+      <span>
+        {tableData.currentPage} / {tableData.totalPages}
+      </span>
+      <Button
+        color="neutral"
+        label=""
+        icon="chevronRight"
+        disabled={tableData.currentPage === tableData.totalPages}
+        onClick={() => dispatch(setPagination({ control: "nextPage" }))}
+      />
+      <Button
+        color="neutral"
+        label=""
+        icon="chevronDoubleRight"
+        disabled={tableData.currentPage === tableData.totalPages}
+        onClick={() => dispatch(setPagination({ control: "lastPage" }))}
+      />
     </div>
   );
 }
