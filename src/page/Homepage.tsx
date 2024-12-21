@@ -1,3 +1,4 @@
+import { useDispatch, useSelector } from "react-redux";
 import Button from "../component/button/Button";
 import Section from "../component/section/Section";
 import Select from "../component/select/Select";
@@ -6,6 +7,9 @@ import TextField from "../component/textfield/TextField";
 import { ITask } from "../interface/common";
 import { taskStatusOptions } from "../lib/constant/constant";
 import { taskData } from "../mocks/mockdata";
+import { RootState } from "../store/store";
+import { useEffect } from "react";
+import { setTableData } from "../store/table/tableSlice";
 
 export default function Homepage() {
   const columns: Column<ITask>[] = [
@@ -20,6 +24,15 @@ export default function Homepage() {
     },
     { key: "parentId", header: "Parent ID" },
   ];
+
+  const { data, rowsPerPage, currentPage } = useSelector((state: RootState) => state.table);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setTableData(taskData));
+  }, [dispatch]);
+
+  const paginatedData = data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   return (
     <>
@@ -37,7 +50,7 @@ export default function Homepage() {
         </Section>
 
         <div className="w-full h-full overflow-hidden">
-          <DataTable data={taskData} columns={columns} enableAction/>
+          <DataTable data={paginatedData} columns={columns} enableAction />
         </div>
       </div>
     </>
