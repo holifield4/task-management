@@ -25,15 +25,28 @@ export default function Homepage() {
     { key: "parentId", header: "Parent ID" },
   ];
 
-  const { data, rowsPerPage, currentPage } = useSelector((state: RootState) => state.table);
+  const { data, rowsPerPage, currentPage, filteredData } = useSelector(
+    (state: RootState) => state.table
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(setTableData(taskData));
   }, [dispatch]);
 
-  const paginatedData = data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
-
+  const paginatedData =
+    filteredData === "" || filteredData === "All"
+      ? data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+      : data
+          .filter((item) => {
+            return Object.values(item).some((value) =>
+              value
+                ?.toString()
+                .toLowerCase()
+                .includes(filteredData.toLowerCase())
+            );
+          })
+          .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
   return (
     <>
       <div className="w-full h-full flex flex-col">
