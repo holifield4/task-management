@@ -1,11 +1,17 @@
 import { ReactNode } from "react";
-import Button from "../button/Button";
+import Button, { CustomButton } from "../button/Button";
 import TextField from "../textfield/TextField";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { setPagination, setSort } from "../../store/table/tableSlice";
-import Select from "../select/Select";
-import { pageSize } from "../../lib/constant/constant";
+import {
+  setFilter,
+  setPagination,
+  setSort,
+  setViews,
+} from "../../store/table/tableSlice";
+import { pageSize, taskStatusOptions } from "../../lib/constant/constant";
+import CustomDropdown from "../custom-dropdown/CustomDropdown";
+import { IDropdown, ITask } from "../../interface/common";
 
 export type Column<T> = {
   key: keyof T;
@@ -19,7 +25,7 @@ type DataTableProps<T> = {
   enableAction?: boolean;
 };
 
-export default function DataTable<T extends { id: number | string }>({
+export default function DataTable<T extends { id: number }>({
   data,
   columns,
   enableAction,
@@ -54,21 +60,24 @@ type TableHeaderProps<T> = {
 
 function TableHeader<T>({ columns, actions }: TableHeaderProps<T>) {
   const dispatch = useDispatch();
+  const { visibleColumn } = useSelector((state: RootState) => state.table);
   return (
     <thead>
       <tr className="bg-gray-200 sticky top-0">
-        {columns.map((column) => (
-          <th key={String(column.key)} className="p-2">
-            <Button
-              variant="table"
-              label={column.header}
-              icon="sort"
-              onClick={() =>
-                dispatch(setSort(String(column.key)))
-              }
-            />
-          </th>
-        ))}
+        {columns.map((column) => {
+          if (visibleColumn.includes(column.key as keyof ITask)) {
+            return (
+              <th key={String(column.key)} className="p-3">
+                <Button
+                  variant="table"
+                  label={column.header}
+                  icon="sort"
+                  onClick={() => dispatch(setSort(String(column.key)))}
+                />
+              </th>
+            );
+          }
+        })}
         {actions && <th>More</th>}
       </tr>
     </thead>
@@ -86,15 +95,20 @@ function TableRow<T extends { id: number | string }>({
   columns,
   actions,
 }: TableRowProps<T>) {
+  const { visibleColumn } = useSelector((state: RootState) => state.table);
   return (
     <tr key={row.id}>
-      {columns.map((column) => (
-        <TableCell
-          key={String(column.key)}
-          value={row[column.key]}
-          render={column.render}
-        />
-      ))}
+      {columns.map((column) => {
+        if (visibleColumn.includes(column.key as keyof ITask)) {
+          return (
+            <TableCell
+              key={String(column.key)}
+              value={row[column.key]}
+              render={column.render}
+            />
+          );
+        }
+      })}
       {actions && (
         <td className="border p-2">
           <div className="w-full h-full flex justify-center">
@@ -125,15 +139,44 @@ function TableCell<T>({ value, render }: TableCellProps<T>) {
 }
 
 function TableControl() {
+  const { data, visibleColumn } = useSelector(
+    (state: RootState) => state.table
+  );
+  const dispatch = useDispatch();
+  const viewOptions: IDropdown[] = Object.keys(data?.[0] || {}).map((key) => ({
+    name: key,
+    value: key,
+  }));
   return (
     <div className="w-full h-16 px-4 bg-gray-100 border rounded-t-md border-gray-200 flex justify-between items-center">
       <div className="w-1/3">
-        <TextField label="" placeholder="Search..." />
+        <TextField
+          label=""
+          placeholder="Search..."
+          onChange={(e) => dispatch(setFilter(e.target.value))}
+        />
       </div>
       <div className="w-fit flex gap-3">
-        <Button color="neutral" label="Filter" onClick={() => alert("shesh")} />
-        <Button color="neutral" label="View" icon="adjustment" />
-        <Button color="neutral" label="" icon="printer" />
+        <CustomDropdown
+          label="Status"
+          options={[{ name: "All", value: "All" } as IDropdown].concat(
+            taskStatusOptions
+          )}
+          onChange={(e) => dispatch(setFilter(e.target.value))}
+        />
+        <CustomButton
+          label="View"
+          icon="adjustment"
+          options={viewOptions}
+          checkedOptions={visibleColumn}
+          onChecked={(e) => dispatch(setViews(e as (keyof ITask)[]))}
+        />
+        <Button
+          color="neutral"
+          label=""
+          icon="printer"
+          onClick={() => console.log(visibleColumn)}
+        />
         <Button color="neutral" label="" icon="pdf" />
       </div>
     </div>
@@ -147,9 +190,10 @@ function TableFooter() {
     <div className="w-full h-12 px-4 bg-gray-100 border rounded-b-md border-gray-200 flex justify-end items-center gap-2.5">
       <div className="w-fit flex gap-2.5 items-center">
         <span>Show</span>
-        <Select
+        <CustomDropdown
           label=""
           options={pageSize}
+          value={tableData.rowsPerPage}
           onChange={(e) =>
             dispatch(
               setPagination({
