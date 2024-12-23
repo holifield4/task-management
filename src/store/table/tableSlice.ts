@@ -6,6 +6,8 @@ interface DataTableSlice {
   rowsPerPage: number;
   totalPages: number;
   currentPage: number;
+  visibleColumn: (keyof ITask)[];
+  filteredData: string;
 }
 
 const initialState: DataTableSlice = {
@@ -13,6 +15,8 @@ const initialState: DataTableSlice = {
   rowsPerPage: 10,
   totalPages: 0,
   currentPage: 1,
+  visibleColumn: [] as (keyof ITask)[],
+  filteredData: "",
 };
 
 const tableSlice = createSlice({
@@ -20,6 +24,9 @@ const tableSlice = createSlice({
   initialState,
   reducers: {
     setTableData: (state, action: PayloadAction<ITask[]>) => {
+      if (action.payload.length > 0) {
+        state.visibleColumn = Object.keys(action.payload[0]) as (keyof ITask)[];
+      }
       state.totalPages = Math.ceil(action.payload.length / state.rowsPerPage);
       state.data = action.payload;
     },
@@ -83,9 +90,23 @@ const tableSlice = createSlice({
         return 0;
       });
     },
+    setFilter: (state, action: PayloadAction<string>) => {
+      // state.data = state.data.filter((item) => {
+      //   return Object.values(item).some((value) =>
+      //     value?.toString().toLowerCase().includes(action.payload.toLowerCase())
+      //   );
+      // });
+      // state.totalPages = Math.ceil(state.data.length / state.rowsPerPage);
+      // state.currentPage = 1;
+      state.filteredData = action.payload;
+    },
+    setViews: (state, action: PayloadAction<(keyof ITask)[]>) => {
+      state.visibleColumn = action.payload;
+    },
   },
 });
 
-export const { setTableData, setPagination, setSort } = tableSlice.actions;
+export const { setTableData, setPagination, setSort, setFilter, setViews } =
+  tableSlice.actions;
 
 export default tableSlice.reducer;
