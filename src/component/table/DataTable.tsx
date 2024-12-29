@@ -67,7 +67,7 @@ function TableHeader<T>({ columns, actions }: TableHeaderProps<T>) {
         {columns.map((column) => {
           if (visibleColumn.includes(column.key as keyof ITask)) {
             return (
-              <th key={String(column.key)} className="p-3">
+              <th key={String(column.key)} className={`p-3 ${column.key === 'status' && "flex justify-center"}`}>
                 <Button
                   variant="table"
                   label={column.header}
@@ -132,7 +132,7 @@ type TableCellProps<T> = {
 
 function TableCell<T>({ value, render }: TableCellProps<T>) {
   return (
-    <td className="border p-2">
+    <td className={`border p-2 capitalize ${render && "text-center"}`}>
       {render ? render(value) : value ? String(value) : "Not Available"}
     </td>
   );
