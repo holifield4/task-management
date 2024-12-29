@@ -10,14 +10,12 @@ export default function Select(props: SelectProps) {
   return (
     <>
       <div className="w-full h-fit flex flex-col gap-1 text-xs">
-        <label htmlFor={props.id}>{props.label}</label>
+        {props.label && <label htmlFor={props.id}>{props.label}</label>}
         <select
-          className={`w-full h-8 rounded-md px-1 outline-none border ${
+          {...props}
+          className={`w-full h-8 rounded-md px-1.5 py-0 outline-none focus:ring-0 border ${
             props.errors ? "border-red-600" : "border-slate-300"
-          } focus:border-slate-400`}
-          disabled={props.disabled}
-          onClick={props.onClick}
-          value={props.value}
+          } focus:border-slate-400 text-xs`}
         >
           {props.options.map((item) => (
             <option key={item.value} value={item.value}>
