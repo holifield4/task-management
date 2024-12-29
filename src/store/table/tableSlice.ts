@@ -91,14 +91,12 @@ const tableSlice = createSlice({
       });
     },
     setFilter: (state, action: PayloadAction<string>) => {
-      // state.data = state.data.filter((item) => {
-      //   return Object.values(item).some((value) =>
-      //     value?.toString().toLowerCase().includes(action.payload.toLowerCase())
-      //   );
-      // });
-      // state.totalPages = Math.ceil(state.data.length / state.rowsPerPage);
-      // state.currentPage = 1;
       state.filteredData = action.payload;
+      state.totalPages =
+        state.filteredData === "All" || state.filteredData === ""
+          ? Math.ceil(state.data.length / state.rowsPerPage)
+          : Math.ceil(state.filteredData.length / state.rowsPerPage);
+      state.currentPage = 1;
     },
     setViews: (state, action: PayloadAction<(keyof ITask)[]>) => {
       state.visibleColumn = action.payload;
