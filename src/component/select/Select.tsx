@@ -13,9 +13,9 @@ export default function Select(props: SelectProps) {
         {props.label && <label htmlFor={props.id}>{props.label}</label>}
         <select
           {...props}
-          className={`w-full h-8 rounded-md px-1 outline-none border ${
+          className={`w-full h-8 rounded-md px-1.5 py-0 outline-none focus:ring-0 border ${
             props.errors ? "border-red-600" : "border-slate-300"
-          } focus:border-slate-400`}
+          } focus:border-slate-400 text-xs`}
         >
           {props.options.map((item) => (
             <option key={item.value} value={item.value}>

@@ -12,8 +12,8 @@ export default function CustomDropdown(props: CustomDropdownProps) {
         <label htmlFor={props.id}>{props.label}</label>
         <select
           {...props}
-          className={`w-fit h-8 rounded-md px-1 outline-none border border-slate-300 bg-gray-100
-           focus:border-slate-400`}
+          className={`w-fit h-8 rounded-md px-2 py-0 outline-none border border-slate-300 bg-gray-100
+           focus:border-slate-400 focus:ring-0 text-xs`}
         >
           {props.options.map((item) => (
             <option key={item.value} value={item.value}>
