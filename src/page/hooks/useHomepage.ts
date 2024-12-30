@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { setTableData } from "../../store/table/tableSlice";
 import { taskData } from "../../mocks/mockdata";
+import { ITask } from "../../interface/common";
 
 export const useHomepage = () => {
   /**
@@ -48,10 +49,18 @@ export const useHomepage = () => {
    */
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  /**
+   * Form Related
+   */
+  const [form, setForm] = useState<ITask>({id: 0, name: "", status: "", parentId: undefined});
+
   return {
     paginatedData,
     statusColor,
     setIsOpen,
     isOpen,
+    dispatch,
+    form,
+    setForm
   };
 };
