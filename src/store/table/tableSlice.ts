@@ -101,10 +101,19 @@ const tableSlice = createSlice({
     setViews: (state, action: PayloadAction<(keyof ITask)[]>) => {
       state.visibleColumn = action.payload;
     },
+    createTask: (state, action: PayloadAction<ITask>) => {
+      state.data.push(action.payload);
+    },
+    changeTaskStatus: (state, action: PayloadAction<{id: number; status: string}>) => {
+      const taskIndex = state.data.findIndex((item) => item.id === action.payload.id);
+      if (taskIndex !== -1) {
+        state.data[taskIndex].status = action.payload.status; // Update the status
+      }
+    }
   },
 });
 
-export const { setTableData, setPagination, setSort, setFilter, setViews } =
+export const { setTableData, setPagination, setSort, setFilter, setViews, createTask, changeTaskStatus } =
   tableSlice.actions;
 
 export default tableSlice.reducer;
