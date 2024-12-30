@@ -1,9 +1,9 @@
 import { IDropdown } from "../../interface/common";
 
 export const taskStatusOptions: IDropdown[] = [
-  { name: "In Progress", value: "In Progress" },
-  { name: "Done", value: "Done" },
-  { name: "Complete", value: "Complete" },
+  { name: "In Progress", value: "in progress" },
+  { name: "Done", value: "done" },
+  { name: "Complete", value: "complete" },
 ];
 
 export const pageSize: IDropdown[] = [
