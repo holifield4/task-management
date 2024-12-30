@@ -4,6 +4,7 @@ import TextField from "../textfield/TextField";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import {
+  changeTaskStatus,
   setFilter,
   setPagination,
   setSort,
@@ -12,6 +13,8 @@ import {
 import { pageSize, taskStatusOptions } from "../../lib/constant/constant";
 import CustomDropdown from "../custom-dropdown/CustomDropdown";
 import { IDropdown, ITask } from "../../interface/common";
+import { Dropdown, DropdownHeader, DropdownItem } from "flowbite-react";
+import Icon from "../../lib/icon/Icon";
 
 export type Column<T> = {
   key: keyof T;
@@ -67,7 +70,12 @@ function TableHeader<T>({ columns, actions }: TableHeaderProps<T>) {
         {columns.map((column) => {
           if (visibleColumn.includes(column.key as keyof ITask)) {
             return (
-              <th key={String(column.key)} className={`p-3 ${column.key === 'status' && "flex justify-center"}`}>
+              <th
+                key={String(column.key)}
+                className={`p-3 ${
+                  column.key === "status" && "flex justify-center"
+                }`}
+              >
                 <Button
                   variant="table"
                   label={column.header}
@@ -90,12 +98,13 @@ type TableRowProps<T> = {
   actions?: boolean;
 };
 
-function TableRow<T extends { id: number | string }>({
+function TableRow<T extends { id: number }>({
   row,
   columns,
   actions,
 }: TableRowProps<T>) {
   const { visibleColumn } = useSelector((state: RootState) => state.table);
+  const dispatch = useDispatch();
   return (
     <tr key={row.id}>
       {columns.map((column) => {
@@ -112,12 +121,16 @@ function TableRow<T extends { id: number | string }>({
       {actions && (
         <td className="border p-2">
           <div className="w-full h-full flex justify-center">
-            <Button
+            <Dropdown
               label=""
-              variant="table"
-              icon="dots"
-              onClick={() => alert("dispatch something")}
-            />
+              inline
+              renderTrigger={() => <span className="hover:cursor-pointer"><Icon icon="dots"/></span>}
+            >
+              <DropdownHeader><span className="text-slate-500 font-semibold">Change Task Status</span></DropdownHeader>
+              <DropdownItem onClick={() => dispatch(changeTaskStatus({id: row.id, status: 'in progress'}))}>In Progress</DropdownItem>
+              <DropdownItem onClick={() => dispatch(changeTaskStatus({id: row.id, status: 'complete'}))}>Complete</DropdownItem>
+              <DropdownItem onClick={() => dispatch(changeTaskStatus({id: row.id, status: 'done'}))}>Done</DropdownItem>
+            </Dropdown>
           </div>
         </td>
       )}
